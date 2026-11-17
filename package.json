@@ -1,0 +1,45 @@
+{
+  "name": "roots-afforestation",
+  "version": "1.0.0",
+  "description": "ROOTS – Community-Driven Afforestation, Soil Science & Tree Survival Platform",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/payalgoud9750-cell/whatyouworth.git"
+  },
+  "keywords": [],
+  "author": "ROOTS Environmental Open Initiative",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/payalgoud9750-cell/whatyouworth/issues"
+  },
+  "homepage": "https://github.com/payalgoud9750-cell/whatyouworth#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
+    "clsx": "^2.1.1",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^1.74.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-leaflet": "^5.0.0",
+    "react-router-dom": "^7.18.5",
+    "recharts": "^3.10.1",
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.22",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "autoprefixer": "^10.6.2",
+    "postcss": "^8.5.33",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}

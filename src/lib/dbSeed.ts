@@ -1,0 +1,756 @@
+import { SoilType, PlantSpecies, PlantationEvent, TreeRecord, TreeGrowthUpdate, EnvironmentalStatistics } from '../types';
+
+export const INITIAL_SOIL_TYPES: SoilType[] = [
+  {
+    id: 'soil-alluvial',
+    name: 'Alluvial Soil',
+    slug: 'alluvial',
+    composition: 'Formed by silt, silt-clay deposits carried by river systems (Indo-Gangetic plains, deltaic coasts). Rich in potash, phosphoric acid, and lime; deficient in nitrogen and humus.',
+    texture: 'Loamy to sandy loam with fine-grained riverine silt particles.',
+    ph_range: '6.5 – 8.2 (Slightly acidic to moderately alkaline)',
+    nutrient_availability: 'High natural fertility with abundant potash, magnesium, and active minerals.',
+    water_retention: 'Moderate to high; holds moisture efficiently without extensive waterlogging.',
+    drainage: 'Well-drained in upper terraces; slow draining in heavy floodplain silt pockets.',
+    suitable_trees: ['Peepal', 'Banyan', 'Mango', 'Arjun', 'Teak', 'Indian Gooseberry (Amla)'],
+    suitable_plants: ['Wheat', 'Rice', 'Sugarcane', 'Bamboo', 'Mustard', 'Jute'],
+    advantages: [
+      'Exceptional agricultural and arboricultural fertility',
+      'Porous and soft texture facilitates deep taproot penetration',
+      'High cation-exchange capacity responsive to organic composting'
+    ],
+    limitations: [
+      'Nitrogen depletion requires nitrogen-fixing companion leguminous cover',
+      'Susceptible to topsoil compaction under heavy farm machinery'
+    ],
+    color_description: 'Light grey to ash-grey and golden-brown silt tone',
+    image_url: '/images/Alluvial-Soil.jpg'
+  },
+  {
+    id: 'soil-black',
+    name: 'Black Soil (Regur)',
+    slug: 'black',
+    composition: 'Originates from Deccan lava trap basalt weathering. Highly argillaceous with montmorillonite clay minerals, iron, magnesium, carbonates, and calcium.',
+    texture: 'Heavy, dense clayey texture that expands when wet and fissures deeply when desiccated.',
+    ph_range: '7.5 – 8.5 (Mildly alkaline)',
+    nutrient_availability: 'Rich in lime, iron, magnesium carbonate, and alumina; poor in phosphorus and organic nitrogen.',
+    water_retention: 'Extremely high; swells upon wetting and retains moisture into late winter.',
+    drainage: 'Very slow; prone to severe water stagnation during intense monsoon deluges.',
+    suitable_trees: ['Neem', 'Banyan', 'Tamarind', 'Teak', 'Babool'],
+    suitable_plants: ['Cotton', 'Soybean', 'Chickpea', 'Sorghum', 'Sunflower'],
+    advantages: [
+      'Self-ploughing capacity through deep seasonal shrinkage cracking',
+      'Long-term moisture storage supports deep-rooted drought-hardy timber species',
+      'High natural lime content stabilizes basic soil structure'
+    ],
+    limitations: [
+      'Very sticky and unworkable when saturated with water',
+      'Pore compaction can suffocate young saplings lacking raised mounds'
+    ],
+    color_description: 'Deep black to dark charcoal and dark brownish-slate',
+    image_url: '/images/black-soil.jpg'
+  },
+  {
+    id: 'soil-red',
+    name: 'Red Soil',
+    slug: 'red',
+    composition: 'Formed from weathering of ancient crystalline and metamorphic rocks (granite, gneiss). Iron oxide diffusion gives characteristic rust-red pigmentation.',
+    texture: 'Porous, friable, sandy loam to coarse loamy gravel.',
+    ph_range: '5.5 – 6.8 (Slightly acidic to neutral)',
+    nutrient_availability: 'Generally deficient in nitrogen, phosphorus, potassium, and humus; elevated ferric oxide.',
+    water_retention: 'Low to moderate; high percolation rate prevents waterlogging.',
+    drainage: 'Rapid internal drainage; prevents root rot in monsoon periods.',
+    suitable_trees: ['Mango', 'Jackfruit', 'Tamarind', 'Indian Gooseberry (Amla)', 'Teak'],
+    suitable_plants: ['Millets (Ragi, Jowar)', 'Groundnut', 'Pulses', 'Tobacco'],
+    advantages: [
+      'Excellent aeration for fast root network branching',
+      'Resistant to waterlogging and soil-borne fungal stagnation',
+      'Readily amenable to biochar and organic vermicompost enrichment'
+    ],
+    limitations: [
+      'Rapid nutrient leaching under torrential rainfall',
+      'Low intrinsic moisture buffer requires diligent summer mulching'
+    ],
+    color_description: 'Warm terra cotta, rust red, and reddish-brown',
+    image_url: '/images/red-soil.jpg'
+  },
+  {
+    id: 'soil-laterite',
+    name: 'Laterite Soil',
+    slug: 'laterite',
+    composition: 'Formed under conditions of high temperature and heavy seasonal rainfall with alternating wet and dry spells. Heavy leaching strips silica, leaving hydrous oxides of aluminum and iron.',
+    texture: 'Coarse, porous, vesicular, hardens irreversibly into brick-like consistency upon exposure.',
+    ph_range: '4.5 – 6.0 (Strongly to moderately acidic)',
+    nutrient_availability: 'Very low fertility; low in lime, nitrogen, magnesium, and phosphorus; rich in bauxite and iron.',
+    water_retention: 'Low; porous gravel matrix drains rapidly.',
+    drainage: 'Excessive drainage; rapid run-off on sloping topography.',
+    suitable_trees: ['Jackfruit', 'Coconut', 'Teak', 'Cashew', 'Rubber'],
+    suitable_plants: ['Coffee', 'Tea', 'Arecanut', 'Tapioca', 'Pepper'],
+    advantages: [
+      'Immune to soil waterlogging and anaerobic root decay',
+      'Structural firmness stabilizes steep terrace and hill contours',
+      'Compatible with acidic mycorrhizal fungal symbioses'
+    ],
+    limitations: [
+      'High soil acidity requires agricultural lime (calcium carbonate) buffering',
+      'Low biological active microbial activity without heavy green leaf mulching'
+    ],
+    color_description: 'Reddish-yellow to mottled brick-orange and ochre',
+    image_url: '/images/laterite-soil.jpg'
+  },
+  {
+    id: 'soil-sandy',
+    name: 'Sandy Soil',
+    slug: 'sandy',
+    composition: 'Predominantly quartz and silica particles greater than 0.05 mm. Minimal cohesive clay platelets.',
+    texture: 'Granular, loose, non-cohesive, gritty to the touch.',
+    ph_range: '6.0 – 7.8 (Neutral to mildly alkaline)',
+    nutrient_availability: 'Very low cation-exchange capacity; mineral nutrients wash out rapidly.',
+    water_retention: 'Extremely poor; gravitational water percolates rapidly downward.',
+    drainage: 'Ultra-fast drainage; dries out quickly in direct sun.',
+    suitable_trees: ['Coconut', 'Neem', 'Casuarina', 'Babool', 'Date Palm'],
+    suitable_plants: ['Watermelon', 'Peanuts', 'Cucumber', 'Agave'],
+    advantages: [
+      'Warms up quickly in early spring, triggering early root vigor',
+      'Zero risk of oxygen starvation or root rot',
+      'Easy to excavate and transplant without root shear'
+    ],
+    limitations: [
+      'Dries rapidly requiring drip lines or pit water hydrogel basins',
+      'Requires repeated applications of farmyard manure to establish organic matter'
+    ],
+    color_description: 'Pale beige, light yellowish tan to bleached sand',
+    image_url: '/images/sandy-soil.jpg'
+  },
+  {
+    id: 'soil-clay',
+    name: 'Clay Soil',
+    slug: 'clay',
+    composition: 'Extremely fine colloidal mineral particles (<0.002 mm). High specific surface area and mineral charge.',
+    texture: 'Smooth, plastic and moldable when wet; rock-hard and cracked when dry.',
+    ph_range: '6.8 – 8.2 (Neutral to moderately alkaline)',
+    nutrient_availability: 'High nutrient holding capacity; binds calcium, potassium, and magnesium firmly.',
+    water_retention: 'Very high; forms heavy saturated sludge during monsoon downpours.',
+    drainage: 'Very slow internal drainage; low hydraulic conductivity.',
+    suitable_trees: ['Arjun', 'Banyan', 'Peepal', 'Jamun', 'Willow'],
+    suitable_plants: ['Paddy rice', 'Broccoli', 'Cabbage', 'Water spinach'],
+    advantages: [
+      'Immense chemical nutrient density; holds fertilizers without leaching',
+      'Provides anchor strength against high cyclonic winds for mature forest giants'
+    ],
+    limitations: [
+      'Slow to warm and poorly aerated during prolonged rains',
+      'Pit amendment with coarse sand and dry leaf litter necessary during initial planting'
+    ],
+    color_description: 'Dense brownish-grey, dark khaki, to brownish-red',
+    image_url: '/images/clay-soil.jpg'
+  },
+  {
+    id: 'soil-loamy',
+    name: 'Loamy Soil',
+    slug: 'loamy',
+    composition: 'Balanced equilibrium of roughly 40% sand, 40% silt, and 20% clay, enriched with decomposed organic humus.',
+    texture: 'Soft, crumbly, porous, and friable with optimal crumb soil structure.',
+    ph_range: '6.0 – 7.2 (Ideal agronomic range)',
+    nutrient_availability: 'Optimal balance of macro-nutrients (N, P, K) and vital trace elements (Fe, Zn, Mn).',
+    water_retention: 'Ideal; holds plant-available capillary water while shedding excess gravitational surplus.',
+    drainage: 'Moderate and uniform; excellent oxygen diffusion to rhizosphere.',
+    suitable_trees: ['Neem', 'Banyan', 'Peepal', 'Mango', 'Jackfruit', 'Teak', 'Indian Gooseberry (Amla)', 'Arjun', 'Tamarind'],
+    suitable_plants: ['All fruit orchards', 'Forest nursery saplings', 'Legumes', 'Root crops'],
+    advantages: [
+      'The gold standard soil for afforestation and botanical rehabilitation',
+      'Supports vibrant earthworm and fungal mycorrhizal networks',
+      'Rapid sapling root establishment with minimum initial transplant shock'
+    ],
+    limitations: [
+      'Vulnerable to nutrient degradation if cleared of tree canopy cover',
+      'Requires continuous organic mulch to prevent surface crusting under solar exposure'
+    ],
+    color_description: 'Rich dark chocolate brown to deep earthy black-brown',
+    image_url: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1000&q=80'
+  }
+];
+
+export const INITIAL_PLANTS: PlantSpecies[] = [
+  {
+    id: 'plant-neem',
+    common_name: 'Neem',
+    scientific_name: 'Azadirachta indica',
+    family: 'Meliaceae',
+    soil_preferences: ['Black Soil', 'Sandy Soil', 'Red Soil', 'Loamy Soil'],
+    ideal_ph_range: '6.2 – 8.5',
+    sunlight: 'Full Sun',
+    water_needs: 'Low',
+    growth_rate: 'Fast',
+    max_height_meters: 20,
+    native_status: 'Indigenous to Indian Subcontinent & Myanmar',
+    environmental_benefits: [
+      'Natural biopesticide; azadirachtin compound wards off leaf locusts and termites',
+      'Deep taproot system mines subterranean aquifers and stabilizes saline soils',
+      'High carbon sequestration rate and substantial particulate matter air filtration'
+    ],
+    planting_season: 'Early Monsoon (June – August)',
+    medicinal_or_economic_value: 'Key ayurvedic antiseptic, dental twigs (datun), organic neem cake fertilizer and seed oil extract.',
+    image_url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'plant-banyan',
+    common_name: 'Banyan',
+    scientific_name: 'Ficus benghalensis',
+    family: 'Moraceae',
+    soil_preferences: ['Alluvial Soil', 'Loamy Soil', 'Clay Soil', 'Black Soil'],
+    ideal_ph_range: '6.0 – 8.0',
+    sunlight: 'Full Sun to Partial Shade',
+    water_needs: 'Moderate',
+    growth_rate: 'Moderate',
+    max_height_meters: 30,
+    native_status: 'National Tree of India, native across Indian Subcontinent',
+    environmental_benefits: [
+      'Keystone ecological species feeding hundreds of bird, bat, and insect species year-round',
+      'Prop aerial roots drop to form secondary trunks, creating microclimates and soil anchor grids',
+      'Massive evergreen canopy cooling local ambient temperatures by 3°C to 5°C'
+    ],
+    planting_season: 'Monsoon onset (June – July)',
+    medicinal_or_economic_value: 'Latex used in traditional analgesics, bark decoctions for blood sugar regulation.',
+    image_url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'plant-peepal',
+    common_name: 'Peepal (Sacred Fig)',
+    scientific_name: 'Ficus religiosa',
+    family: 'Moraceae',
+    soil_preferences: ['Alluvial Soil', 'Loamy Soil', 'Clay Soil', 'Red Soil'],
+    ideal_ph_range: '6.5 – 7.8',
+    sunlight: 'Full Sun',
+    water_needs: 'Moderate',
+    growth_rate: 'Fast',
+    max_height_meters: 25,
+    native_status: 'Native to Indian Subcontinent and Indochina',
+    environmental_benefits: [
+      'Utilizes Crassulacean Acid Metabolism (CAM) pathway enabling partial nighttime oxygen release',
+      'Cordate leaves with elongated drip tips flutter in minimal breeze, inducing air currents',
+      'Immense soil retention preventing bank collapse along waterways and urban channels'
+    ],
+    planting_season: 'Monsoon (July – September)',
+    medicinal_or_economic_value: 'Astringent bark used in wound treatment and respiratory formulations.',
+    image_url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'plant-mango',
+    common_name: 'Mango',
+    scientific_name: 'Mangifera indica',
+    family: 'Anacardiaceae',
+    soil_preferences: ['Alluvial Soil', 'Red Soil', 'Loamy Soil'],
+    ideal_ph_range: '5.5 – 7.5',
+    sunlight: 'Full Sun',
+    water_needs: 'Moderate',
+    growth_rate: 'Moderate',
+    max_height_meters: 22,
+    native_status: 'Native to South Asia, cultivated in India for over 4,000 years',
+    environmental_benefits: [
+      'Dense evergreen canopy providing extensive shade shelter for forest floor fauna',
+      'High seasonal blossom nectar sustains massive wild bee and pollinator communities',
+      'Deep anchoring taproot mitigates hillwash and soil erosion during heavy rains'
+    ],
+    planting_season: 'July to August (during regular monsoon showers)',
+    medicinal_or_economic_value: 'Major agricultural fruit commodity, timber for rustic furniture, leaves used in cultural rites.',
+    image_url: 'https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'plant-jackfruit',
+    common_name: 'Jackfruit',
+    scientific_name: 'Artocarpus heterophyllus',
+    family: 'Moraceae',
+    soil_preferences: ['Red Soil', 'Laterite Soil', 'Loamy Soil', 'Alluvial Soil'],
+    ideal_ph_range: '5.5 – 7.0',
+    sunlight: 'Full Sun to Partial Shade',
+    water_needs: 'Moderate',
+    growth_rate: 'Moderate',
+    max_height_meters: 18,
+    native_status: 'Indigenous to the Western Ghats of India',
+    environmental_benefits: [
+      'Drought-tolerant once established; resilient buffer against climate instability',
+      'Provides nutrient-dense biomass fodder and abundant fallen organic matter',
+      'Supports high agroforestry biodiversity in intercropping systems'
+    ],
+    planting_season: 'Onset of South-West Monsoon (June – July)',
+    medicinal_or_economic_value: 'State fruit of Kerala & Tamil Nadu; miracle meat alternative, timber resistant to fungal decay.',
+    image_url: 'https://images.unsplash.com/photo-1589578527966-fdac0f44566c?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'plant-teak',
+    common_name: 'Teak',
+    scientific_name: 'Tectona grandis',
+    family: 'Lamiaceae',
+    soil_preferences: ['Alluvial Soil', 'Red Soil', 'Loamy Soil', 'Black Soil'],
+    ideal_ph_range: '6.5 – 7.5',
+    sunlight: 'Full Sun',
+    water_needs: 'Moderate to High',
+    growth_rate: 'Slow to Moderate',
+    max_height_meters: 35,
+    native_status: 'Indigenous to South and Southeast Asia, prominent in central and southern India',
+    environmental_benefits: [
+      'Massive long-term timber carbon storage spanning decades to centuries',
+      'Large broad deciduous leaves contribute thick autumn nutrient mulch to forest floors',
+      'Forms tall canopy layer in climax tropical moist and dry deciduous forests'
+    ],
+    planting_season: 'Pre-monsoon stumps or monsoon saplings (June – July)',
+    medicinal_or_economic_value: 'World gold standard timber for marine, shipbuilding, exterior architecture due to natural tectoquinones.',
+    image_url: '/images/teak.jpg'
+  },
+  {
+    id: 'plant-coconut',
+    common_name: 'Coconut Palm',
+    scientific_name: 'Cocos nucifera',
+    family: 'Arecaceae',
+    soil_preferences: ['Sandy Soil', 'Laterite Soil', 'Alluvial Soil'],
+    ideal_ph_range: '5.2 – 8.0',
+    sunlight: 'Full Sun',
+    water_needs: 'High',
+    growth_rate: 'Moderate',
+    max_height_meters: 28,
+    native_status: 'Native to coastal Indo-Pacific regions, deeply woven into Indian coastal ecology',
+    environmental_benefits: [
+      'Fibrous root matrix anchors loose littoral sand dunes against marine storm surges and tsunamis',
+      'Tolerates brackish groundwater and high marine salt mist',
+      'Provides vertical stratification in multi-tiered coastal agroforestry'
+    ],
+    planting_season: 'May – June or September – October',
+    medicinal_or_economic_value: 'Kalpavriksha (tree providing all life necessities): water, copra oil, coir fibers, construction thatch.',
+    image_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'plant-tamarind',
+    common_name: 'Tamarind',
+    scientific_name: 'Tamarindus indica',
+    family: 'Fabaceae',
+    soil_preferences: ['Red Soil', 'Black Soil', 'Loamy Soil', 'Sandy Soil'],
+    ideal_ph_range: '5.5 – 7.8',
+    sunlight: 'Full Sun',
+    water_needs: 'Low',
+    growth_rate: 'Slow',
+    max_height_meters: 24,
+    native_status: 'Naturalized across India over millennia, indigenous to tropical dry tropics',
+    environmental_benefits: [
+      'Extreme windbreak resilience; flexible branches withstand gale cyclones without snapping',
+      'Nitrogen-fixing leguminous nodules improve impoverished wasteland soils',
+      'Provides dense round evergreen shade in arid heat zones'
+    ],
+    planting_season: 'July to September',
+    medicinal_or_economic_value: 'Culinary staple pulp rich in tartaric acid, seed pectin for textiles, heavy durable heartwood.',
+    image_url: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'plant-arjun',
+    common_name: 'Arjun',
+    scientific_name: 'Terminalia arjuna',
+    family: 'Combretaceae',
+    soil_preferences: ['Alluvial Soil', 'Clay Soil', 'Loamy Soil'],
+    ideal_ph_range: '6.5 – 8.5',
+    sunlight: 'Full Sun',
+    water_needs: 'Moderate to High',
+    growth_rate: 'Fast',
+    max_height_meters: 25,
+    native_status: 'Endemic riverine tree across peninsular and sub-Himalayan India',
+    environmental_benefits: [
+      'Primary riparian buffer tree; buttressed root trunks lock riverbanks against flood erosion',
+      'Larval host plant for the wild tropical Antheraea mylitta (Tasar silkworm)',
+      'High tolerance to temporary submergence and heavy alluvial silt loads'
+    ],
+    planting_season: 'June to August during riverine monsoon rising',
+    medicinal_or_economic_value: 'Renowned cardioprotective bark used in Ayurvedic formulations for cardiac strength and vascular health.',
+    image_url: '/images/arjun.jpg'
+  },
+  {
+    id: 'plant-amla',
+    common_name: 'Indian Gooseberry (Amla)',
+    scientific_name: 'Phyllanthus emblica',
+    family: 'Phyllanthaceae',
+    soil_preferences: ['Red Soil', 'Loamy Soil', 'Alluvial Soil', 'Laterite Soil'],
+    ideal_ph_range: '6.0 – 8.0',
+    sunlight: 'Full Sun',
+    water_needs: 'Low to Moderate',
+    growth_rate: 'Moderate',
+    max_height_meters: 12,
+    native_status: 'Indigenous to tropical southeastern and peninsular India',
+    environmental_benefits: [
+      'Pioneer species for afforestation of degraded scrublands and semi-arid terrain',
+      'Feeds native parakeets, frugivorous birds, and wild herbivores throughout dry winters',
+      'Tolerates moderate soil salinity and alkaline sodic conditions'
+    ],
+    planting_season: 'July – August',
+    medicinal_or_economic_value: 'Richest natural botanical source of Vitamin C, core component of Chyawanprash and Triphala.',
+    image_url: '/images/amla-plant.jpg'
+  }
+];
+
+export const INITIAL_EVENTS: PlantationEvent[] = [
+  {
+    id: 'event-blr-01',
+    organizer_id: 'org-karnataka-green',
+    organizer_name: 'Karnataka Forest Forum & ROOTS Hub',
+    title: 'Hesaraghatta Grassland & Lake Riparian Restoration Drive',
+    description: 'Join community volunteers and conservation botanists to plant native riverine species along the Hesaraghatta catchment basin. We will focus on planting Arjun, Banyan, and Neem saplings with drip mulch basins to restore local groundwater recharge.',
+    date: '2026-12-06',
+    time: '07:30 AM – 11:30 AM IST',
+    location_name: 'Hesaraghatta Lake Buffer Zone, North Bengaluru',
+    latitude: 13.1415,
+    longitude: 77.4920,
+    state: 'Karnataka',
+    trees_planned: 500,
+    volunteer_capacity: 75,
+    registered_count: 52,
+    tree_species: ['Arjun', 'Banyan', 'Neem', 'Indian Gooseberry (Amla)'],
+    soil_type: 'Red Soil & Sandy Loam',
+    contact_phone: '+91 98450 12345',
+    contact_email: 'drives.blr@roots-afforestation.org',
+    poster_url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80',
+    status: 'upcoming',
+    completed_trees: 0,
+    created_at: '2026-11-01T10:00:00Z'
+  },
+  {
+    id: 'event-mum-02',
+    organizer_id: 'org-sahyadri-trust',
+    organizer_name: 'Sahyadri Ecological Conservation Society',
+    title: 'Sanjay Gandhi National Park Buffer Zone Miyawaki Afforestation',
+    description: 'Establishing a dense native micro-forest along the degraded boundary corridor of SGNP to create an acoustic and environmental buffer against urban highway emissions.',
+    date: '2026-12-13',
+    time: '08:00 AM – 12:00 PM IST',
+    location_name: 'Yeoor Hills Outpost, SGNP Perimeter, Thane',
+    latitude: 19.2215,
+    longitude: 72.9510,
+    state: 'Maharashtra',
+    trees_planned: 400,
+    volunteer_capacity: 60,
+    registered_count: 48,
+    tree_species: ['Teak', 'Mango', 'Jackfruit', 'Tamarind'],
+    soil_type: 'Black Basaltic Clay & Laterite',
+    contact_phone: '+91 98200 45678',
+    contact_email: 'mumbai@roots-afforestation.org',
+    poster_url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
+    status: 'upcoming',
+    completed_trees: 0,
+    created_at: '2026-11-04T12:00:00Z'
+  },
+  {
+    id: 'event-del-03',
+    organizer_id: 'org-aravali-collective',
+    organizer_name: 'Aravalli Biodiversity Action Network',
+    title: 'Southern Ridge Native Rewilding & Soil Rehabilitation',
+    description: 'Combating invasive Vilayati Kikar (Prosopis juliflora) by systematically interplanting native Neem, Peepal, and Amla in deep-pit compost trenches across rocky quartzite terrain.',
+    date: '2026-12-20',
+    time: '08:30 AM – 01:00 PM IST',
+    location_name: 'Asola Bhatti Wildlife Sanctuary Perimeter, New Delhi',
+    latitude: 28.4900,
+    longitude: 77.2400,
+    state: 'Delhi NCR',
+    trees_planned: 600,
+    volunteer_capacity: 90,
+    registered_count: 81,
+    tree_species: ['Neem', 'Peepal', 'Indian Gooseberry (Amla)'],
+    soil_type: 'Sandy Loam with Rocky Outcrops',
+    contact_phone: '+91 98110 99887',
+    contact_email: 'aravalli@roots-afforestation.org',
+    poster_url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80',
+    status: 'upcoming',
+    completed_trees: 0,
+    created_at: '2026-11-08T09:30:00Z'
+  },
+  {
+    id: 'event-hyd-04',
+    organizer_id: 'org-telangana-green',
+    organizer_name: 'Deccan Botanical Guild',
+    title: 'Musi Watershed Green Spine & Micro-Forest Drive',
+    description: 'Community afforestation along the upper watershed to enhance seasonal infiltration and curtail soil silt run-off into the river basin.',
+    date: '2026-11-10',
+    time: '07:00 AM – 11:00 AM IST',
+    location_name: 'Gandipet Bio-Reserve, Hyderabad',
+    latitude: 17.3916,
+    longitude: 78.3248,
+    state: 'Telangana',
+    trees_planned: 350,
+    volunteer_capacity: 50,
+    registered_count: 50,
+    tree_species: ['Neem', 'Tamarind', 'Arjun'],
+    soil_type: 'Red Gravelly Loam',
+    contact_phone: '+91 94400 33221',
+    contact_email: 'hyderabad@roots-afforestation.org',
+    poster_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
+    status: 'completed',
+    completed_trees: 350,
+    created_at: '2026-10-15T08:00:00Z'
+  },
+  {
+    id: 'event-che-05',
+    organizer_id: 'org-tamil-green',
+    organizer_name: 'Pallikaranai Wetland Friends',
+    title: 'Coastal Bioshield Planting – Coconut, Thespesia & Neem',
+    description: 'Strengthening the saline-marsh perimeter against storm surges and supporting resident avian nesting colonies.',
+    date: '2026-12-27',
+    time: '06:45 AM – 10:30 AM IST',
+    location_name: 'Pallikaranai Marshland Fringe, Chennai',
+    latitude: 12.9360,
+    longitude: 80.2150,
+    state: 'Tamil Nadu',
+    trees_planned: 300,
+    volunteer_capacity: 45,
+    registered_count: 26,
+    tree_species: ['Coconut', 'Neem', 'Arjun'],
+    soil_type: 'Alluvial Marine Clay & Sand',
+    contact_phone: '+91 94440 88776',
+    contact_email: 'chennai@roots-afforestation.org',
+    poster_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+    status: 'upcoming',
+    completed_trees: 0,
+    created_at: '2026-11-12T14:15:00Z'
+  }
+];
+
+export const INITIAL_TREES: TreeRecord[] = [
+  {
+    id: 'tree-ka-0101',
+    tree_code: 'ROOTS-KA-2026-0101',
+    species_name: 'Neem',
+    scientific_name: 'Azadirachta indica',
+    planter_id: 'usr-demo-01',
+    planter_name: 'Dr. Anita Rao',
+    plantation_date: '2025-11-15',
+    location_name: 'Hesaraghatta Catchment Basin, Bengaluru',
+    latitude: 13.1415,
+    longitude: 77.4920,
+    soil_type_name: 'Red Soil & Sandy Loam',
+    photo_url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80',
+    initial_height_cm: 65,
+    current_health_status: 'Healthy',
+    is_adopted: true,
+    adopted_by_name: 'Rahul Sharma',
+    total_assessments_count: 5,
+    created_at: '2025-11-15T09:00:00Z'
+  },
+  {
+    id: 'tree-ka-0102',
+    tree_code: 'ROOTS-KA-2026-0102',
+    species_name: 'Banyan',
+    scientific_name: 'Ficus benghalensis',
+    planter_id: 'usr-demo-02',
+    planter_name: 'Sunil Kumar',
+    plantation_date: '2026-02-10',
+    location_name: 'Hesaraghatta Buffer, Bengaluru',
+    latitude: 13.1420,
+    longitude: 77.4935,
+    soil_type_name: 'Loamy Soil',
+    photo_url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80',
+    initial_height_cm: 75,
+    current_health_status: 'Healthy',
+    is_adopted: true,
+    adopted_by_name: 'Pooja Iyer',
+    total_assessments_count: 4,
+    created_at: '2026-02-10T10:15:00Z'
+  },
+  {
+    id: 'tree-mh-0201',
+    tree_code: 'ROOTS-MH-2026-0201',
+    species_name: 'Teak',
+    scientific_name: 'Tectona grandis',
+    planter_id: 'usr-demo-03',
+    planter_name: 'Vikram Joshi',
+    plantation_date: '2026-05-18',
+    location_name: 'SGNP Corridor, Yeoor, Thane',
+    latitude: 19.2215,
+    longitude: 72.9510,
+    soil_type_name: 'Black Soil',
+    photo_url: '/images/teak.jpg',
+    initial_height_cm: 70,
+    current_health_status: 'Needs Attention',
+    is_adopted: false,
+    total_assessments_count: 3,
+    created_at: '2026-05-18T11:00:00Z'
+  },
+  {
+    id: 'tree-dl-0301',
+    tree_code: 'ROOTS-DL-2026-0301',
+    species_name: 'Arjun',
+    scientific_name: 'Terminalia arjuna',
+    planter_id: 'usr-demo-04',
+    planter_name: 'Meera Patel',
+    plantation_date: '2026-08-04',
+    location_name: 'Asola Southern Ridge, New Delhi',
+    latitude: 28.4900,
+    longitude: 77.2400,
+    soil_type_name: 'Sandy Loam',
+    photo_url: '/images/arjun.jpg',
+    initial_height_cm: 80,
+    current_health_status: 'Healthy',
+    is_adopted: true,
+    adopted_by_name: 'Dr. Anita Rao',
+    total_assessments_count: 2,
+    created_at: '2026-08-04T08:30:00Z'
+  },
+  {
+    id: 'tree-tg-0401',
+    tree_code: 'ROOTS-TG-2026-0401',
+    species_name: 'Indian Gooseberry (Amla)',
+    scientific_name: 'Phyllanthus emblica',
+    planter_id: 'usr-demo-01',
+    planter_name: 'Dr. Anita Rao',
+    plantation_date: '2026-09-12',
+    location_name: 'Gandipet Bio-Reserve, Hyderabad',
+    latitude: 17.3916,
+    longitude: 78.3248,
+    soil_type_name: 'Red Soil',
+    photo_url: '/images/amla-plant.jpg',
+    initial_height_cm: 55,
+    current_health_status: 'Under Observation',
+    is_adopted: false,
+    total_assessments_count: 2,
+    created_at: '2026-09-12T09:00:00Z'
+  },
+  {
+    id: 'tree-tn-0501',
+    tree_code: 'ROOTS-TN-2026-0501',
+    species_name: 'Peepal',
+    scientific_name: 'Ficus religiosa',
+    planter_id: 'usr-demo-05',
+    planter_name: 'K. Senthil',
+    plantation_date: '2025-08-20',
+    location_name: 'Pallikaranai Marsh Perimeter, Chennai',
+    latitude: 12.9360,
+    longitude: 80.2150,
+    soil_type_name: 'Alluvial Clay',
+    photo_url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80',
+    initial_height_cm: 90,
+    current_health_status: 'Healthy',
+    is_adopted: true,
+    adopted_by_name: 'Suresh Menon',
+    total_assessments_count: 5,
+    created_at: '2025-08-20T07:45:00Z'
+  }
+];
+
+export const INITIAL_GROWTH_UPDATES: Record<string, TreeGrowthUpdate[]> = {
+  'tree-ka-0101': [
+    {
+      id: 'upd-0101-1',
+      tree_id: 'tree-ka-0101',
+      recorded_by: 'usr-demo-01',
+      recorded_by_name: 'Dr. Anita Rao',
+      checkpoint: 'Day 1',
+      assessment_date: '2025-11-15',
+      height_cm: 65,
+      canopy_spread_cm: 28,
+      health_status: 'Healthy',
+      observations: 'Sapling planted in 60x60x60 cm pit with 15kg compost mix. Root ball intact with no mechanical damage.',
+      maintenance_performed: 'Initial deep root drench (15L water) and straw mulching ring.'
+    },
+    {
+      id: 'upd-0101-2',
+      tree_id: 'tree-ka-0101',
+      recorded_by: 'usr-demo-01',
+      recorded_by_name: 'Dr. Anita Rao',
+      checkpoint: 'Day 30',
+      assessment_date: '2025-12-15',
+      height_cm: 72,
+      canopy_spread_cm: 34,
+      health_status: 'Healthy',
+      observations: 'First round of fresh axial leaf buds emerged. Stem lignification progressing well.',
+      maintenance_performed: 'Weeding within 1m radius and addition of vermicompost top-dress.'
+    },
+    {
+      id: 'upd-0101-3',
+      tree_id: 'tree-ka-0101',
+      recorded_by: 'usr-demo-01',
+      recorded_by_name: 'Dr. Anita Rao',
+      checkpoint: 'Day 90',
+      assessment_date: '2026-02-15',
+      height_cm: 88,
+      canopy_spread_cm: 46,
+      health_status: 'Healthy',
+      observations: 'Robust vegetative expansion. Deep green foliage with zero leaf miner or fungal damage.',
+      maintenance_performed: 'Bamboo staking adjusted to prevent tilt under easterly winds.'
+    },
+    {
+      id: 'upd-0101-4',
+      tree_id: 'tree-ka-0101',
+      recorded_by: 'usr-demo-02',
+      recorded_by_name: 'Sunil Kumar',
+      checkpoint: 'Day 180',
+      assessment_date: '2026-05-15',
+      height_cm: 114,
+      canopy_spread_cm: 62,
+      health_status: 'Healthy',
+      observations: 'Withstood peak summer heat efficiently due to consistent dry leaf mulching and weekly deep soaking.',
+      maintenance_performed: 'Deep root basin aerated with hand fork and dry sugarcane bagasse mulch replenished.'
+    },
+    {
+      id: 'upd-0101-5',
+      tree_id: 'tree-ka-0101',
+      recorded_by: 'usr-demo-01',
+      recorded_by_name: 'Dr. Anita Rao',
+      checkpoint: 'Day 365',
+      assessment_date: '2026-11-15',
+      height_cm: 168,
+      canopy_spread_cm: 95,
+      health_status: 'Healthy',
+      observations: 'Complete 1-year milestone achieved. Taproot anchored deeply into subsoil. Fully self-sustaining young tree.',
+      maintenance_performed: 'Pruned lowest lateral suckers to promote clear vertical trunk bole.'
+    }
+  ],
+  'tree-mh-0201': [
+    {
+      id: 'upd-0201-1',
+      tree_id: 'tree-mh-0201',
+      recorded_by: 'usr-demo-03',
+      recorded_by_name: 'Vikram Joshi',
+      checkpoint: 'Day 1',
+      assessment_date: '2026-05-18',
+      height_cm: 70,
+      canopy_spread_cm: 30,
+      health_status: 'Healthy',
+      observations: 'Planted on moderate slope with bund water trench.',
+      maintenance_performed: 'Basal staking and protective tree guard erected.'
+    },
+    {
+      id: 'upd-0201-2',
+      tree_id: 'tree-mh-0201',
+      recorded_by: 'usr-demo-03',
+      recorded_by_name: 'Vikram Joshi',
+      checkpoint: 'Day 30',
+      assessment_date: '2026-06-18',
+      height_cm: 74,
+      canopy_spread_cm: 32,
+      health_status: 'Under Observation',
+      observations: 'Heavy monsoon onset led to clay surface water stagnation around root collar.',
+      maintenance_performed: 'Dug drainage overflow slit to relieve pooled water.'
+    },
+    {
+      id: 'upd-0201-3',
+      tree_id: 'tree-mh-0201',
+      recorded_by: 'usr-demo-03',
+      recorded_by_name: 'Vikram Joshi',
+      checkpoint: 'Day 90',
+      assessment_date: '2026-08-18',
+      height_cm: 79,
+      canopy_spread_cm: 35,
+      health_status: 'Needs Attention',
+      observations: 'Lower leaves showing minor chlorosis (yellowing) due to root zone water excess. New shoot tip is intact.',
+      maintenance_performed: 'Applied neem cake and dry wood ash around perimeter to deter fungal gnats.'
+    }
+  ]
+};
+
+export const INITIAL_STATISTICS: EnvironmentalStatistics = {
+  total_registered_trees: 1850,
+  total_trees_planted: 1620,
+  total_trees_monitored: 1240,
+  trees_confirmed_healthy: 1045,
+  trees_needing_attention: 142,
+  trees_dead_or_replaced: 53,
+  // Mathematically calculated ONLY from monitored trees: 1045 healthy / 1240 monitored = 84.27%
+  overall_survival_rate: 84.3,
+  completed_drives: 28,
+  active_drives: 6,
+  registered_volunteers: 890,
+  participating_organizations: 24,
+  is_verified_audit: true,
+  last_updated: '2026-11-17'
+};

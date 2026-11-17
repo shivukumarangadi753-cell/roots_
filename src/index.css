@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color: #252B27;
+    background-color: #F7F7F2;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Manrope', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: #252B27;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+}
+
+/* Custom leaflet map adjustments to match nature editorial styling */
+.leaflet-container {
+  font-family: 'Inter', system-ui, sans-serif;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  border: 1px solid #E3E8E2;
+  box-shadow: 0 4px 12px rgba(36, 76, 58, 0.08);
+  padding: 4px;
+}
+
+.leaflet-popup-content {
+  margin: 10px 12px;
+  line-height: 1.5;
+}
+
+/* Clean scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F7F7F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c8d1c6;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #819783;
+}
